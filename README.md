@@ -1,6 +1,6 @@
 # SpliceBERT
 
-SpliceBERT is a pre-trained langauge model pre-trained on more than 2 million mRNA sequences for studying RNA splicing. 
+SpliceBERT is a nucleotide sequence langauge model pre-trained on more than 2 million mRNA sequences for studying RNA splicing. 
 
 ## Quickstart
 
