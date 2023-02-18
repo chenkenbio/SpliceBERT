@@ -10,8 +10,10 @@ SpliceBERT is implemented with [Huggingface](https://huggingface.co/docs/transfo
 - Install PyTorch: https://pytorch.org/get-started/locally/  
 - Install Huggingface transformers: https://huggingface.co/docs/transformers/installation  
 
-SpliceBERT can be easily used for a series downstream tasks using the official api:
+SpliceBERT can be easily used for a series of downstream tasks through the official API.
+See [official guide](https://huggingface.co/docs/transformers/model_doc/bert) for more details.
 
+examples:
 ```python
 import torch
 from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification
@@ -45,4 +47,3 @@ model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_lab
 model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3
 
 ```
-See [official docs](https://huggingface.co/docs/transformers/model_doc/bert) for more details.
