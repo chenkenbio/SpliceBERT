@@ -12,7 +12,7 @@ skip=""
 ## SpliceBERT
 ../scripts/fetch_embedding.py \
     $bed $skip \
-    -m $SPLICEBERT \
+    -m $SPLICEBERT_510 \
     -g $genome -o ./output/$(basename $bed .bed.gz).SpliceBERT 2> ./output/$(basename $bed .bed.gz).SpliceBERT.log
 
 ## SpliceBERT-human
@@ -47,7 +47,7 @@ skip="--skip-donor-acceptor-umap"
 ## SpliceBERT
 ../scripts/fetch_embedding.py \
     $bed $skip \
-    -m $SPLICEBERT \
+    -m $SPLICEBERT_510 \
     -g $genome -o ./output/$(basename $bed .bed.gz).SpliceBERT 2> ./output/$(basename $bed .bed.gz).SpliceBERT.log
 
 ## SpliceBERT-human
