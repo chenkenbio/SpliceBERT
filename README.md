@@ -57,7 +57,7 @@ The codes to reproduce the analysis are available in [examples](./examples):
 - [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 3)  
 - [attention analysis](./examples/03-attention) (related to Figure 4)  
 
-Users could download all the data from [zenodo]() to run the codes.
+Users could download all the data to run the codes from [zenodo]().
 The following python packages or command line tools are also required to reproduce the results:  
 - Python packages:
 	- `transformers`  
@@ -85,13 +85,15 @@ For any other questions, feel free to contact chenkenbio {at} gmail.com.
 ## Citation
 
 ```TeX
-@misc{chen_self-supervised_2023,
-	title = {Self-supervised learning on millions of pre-{mRNA} sequences improves sequence-based {RNA} splicing prediction},
-	url = {https://www.biorxiv.org/content/10.1101/2023.01.31.526427v1},
-	doi = {10.1101/2023.01.31.526427},
-	publisher = {bioRxiv},
+@article{Chen2023.01.31.526427,
 	author = {Chen, Ken and Zhou, Yue and Ding, Maolin and Wang, Yu and Ren, Zhixiang and Yang, Yuedong},
-	month = {Feb},
-	year = {2023}
+	title = {Self-supervised learning on millions of pre-mRNA sequences improves sequence-based RNA splicing prediction},
+	elocation-id = {2023.01.31.526427},
+	year = {2023},
+	doi = {10.1101/2023.01.31.526427},
+	publisher = {Cold Spring Harbor Laboratory},
+	URL = {https://www.biorxiv.org/content/early/2023/02/03/2023.01.31.526427},
+	eprint = {https://www.biorxiv.org/content/early/2023/02/03/2023.01.31.526427.full.pdf},
+	journal = {bioRxiv}
 }
 ```
