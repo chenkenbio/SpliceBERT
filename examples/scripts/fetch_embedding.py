@@ -32,7 +32,7 @@ def get_args():
     p.add_argument("-m", "--model", type=str, required=True, help="model path")
     p.add_argument("-g", "--genome", type=str, required=True, help="genome path")
     p.add_argument("-o", "--output", type=str, required=True, help="output file")
-    # p.add_argument('--seed', type=int, default=2020)
+    p.add_argument('--seed', type=int, default=2023)
     return p
 
 def encode_dnabert(seq: str, k: int):
@@ -106,6 +106,7 @@ class FiexedBedData(Dataset):
 
 if __name__ == "__main__":
     args = get_args().parse_args()
+    np.random.seed(args.seed)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -153,11 +154,11 @@ if __name__ == "__main__":
             adata.obs['name2'] = ds.name2
             adata.obs["label"] = [x.split("|")[-1] for x in ds.name]
             if embed.shape[1] > 128:
-                sc.pp.pca(adata, n_comps=128)
+                sc.pp.pca(adata, n_comps=128, random_state=0)
                 sc.pp.neighbors(adata, use_rep='X_pca')
             else:
                 sc.pp.neighbors(adata, use_rep='X')
-            sc.tl.umap(adata)
+            sc.tl.umap(adata, random_state=0)
             sc.tl.leiden(adata)
             adata.write_h5ad(f"{args.output}.flanking{flanking}.h5ad")
     else:
@@ -170,9 +171,9 @@ if __name__ == "__main__":
             adata.obs['name'] = ds.name
             adata.obs['name2'] = ds.name2
             adata.obs["label"] = [x.split("|")[-1] for x in ds.name]
-            sc.pp.pca(adata, n_comps=128)
+            sc.pp.pca(adata, n_comps=128, random_state=0)
             sc.pp.neighbors(adata, use_rep='X_pca')
-            sc.tl.umap(adata)
+            sc.tl.umap(adata, random_state=0)
             sc.tl.leiden(adata)
             adata.write_h5ad(f"{args.output}.L{h}.h5ad")
             if args.skip_donor_acceptor_umap:
@@ -181,13 +182,13 @@ if __name__ == "__main__":
             is_ag = np.asarray([x.split('|')[-1].startswith("AG") for x in adata.obs["label"]])
             gt_adata = adata[is_gt]
             ag_adata = adata[is_ag]
-            sc.pp.pca(gt_adata, n_comps=128)
+            sc.pp.pca(gt_adata, n_comps=128, random_state=0)
             sc.pp.neighbors(gt_adata, use_rep='X_pca')
-            sc.tl.umap(gt_adata)
+            sc.tl.umap(gt_adata, random_state=0)
             sc.tl.leiden(gt_adata)
-            sc.pp.pca(ag_adata, n_comps=128)
+            sc.pp.pca(ag_adata, n_comps=128, random_state=0)
             sc.pp.neighbors(ag_adata, use_rep='X_pca')
-            sc.tl.umap(ag_adata)
+            sc.tl.umap(ag_adata, random_state=0)
             sc.tl.leiden(ag_adata)
             gt_adata.write_h5ad(f"{args.output}.L{h}.GT.h5ad")
             ag_adata.write_h5ad(f"{args.output}.L{h}.AG.h5ad")
