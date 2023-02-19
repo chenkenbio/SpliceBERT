@@ -7,7 +7,6 @@ It can be used to study RNA splicing and other biological problems related to pr
 
 - [How to use SpliceBERT?](#how-to-use-splicebert)
 - [Reproduce the analysis in manuscript](#reproduce-the-analysis-in-manuscript)
-- [Finetune SpliceBERT for splice sites/branchpoints prediction](#finetune-splicebert-for-splice-sitesbranchpoints-prediction)
 - [Contact](#contact)
 - [Citation](#citation)
 
@@ -63,7 +62,7 @@ The codes to reproduce the analysis are available in [examples](./examples):
 - [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 3)  
 - [attention weight analysis](./examples/03-attention) (related to Figure 4)  
 
-Users could download all the data to run the codes from [zenodo]().
+Users could download all the data to run the codes from zenodo.
 The following python packages or command line tools are also required to reproduce the results:  
 - Python packages:
 	- `transformers`  
@@ -79,8 +78,6 @@ The following python packages or command line tools are also required to reprodu
 	- `bedtools`  
 	- `MaxEntScan` (optional)  
 	- `gtfToGenePred` (optional)  
-
-## Finetune SpliceBERT for splice sites/branchpoints prediction
 
 ## Contact
 For issues related to the scripts, create an issue at https://github.com/biomed-AI/SpliceBERT/issues.
