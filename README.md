@@ -3,6 +3,8 @@
 SpliceBERT ([manuscript](https://www.biorxiv.org/content/10.1101/2023.01.31.526427v1)) is a pre-mRNA sequence language model pre-trained on over 2 million vertebrate pre-mRNA sequences.
 It can be used to study RNA splicing and other biological problems related to pre-mRNA sequence.
 
+![splice site visualization](./examples/02-embedding/Figure_3.jpg)
+
 
 ## How to use SpliceBERT?
 
