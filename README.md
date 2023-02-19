@@ -5,6 +5,12 @@ It can be used to study RNA splicing and other biological problems related to pr
 
 ![splice site visualization](./examples/02-embedding/Figure_3.jpg)
 
+- [How to use SpliceBERT?](#how-to-use-splicebert)
+- [Reproduce the analysis in manuscript](#reproduce-the-analysis-in-manuscript)
+- [Finetune SpliceBERT for splice sites/branchpoints prediction](#finetune-splicebert-for-splice-sitesbranchpoints-prediction)
+- [Contact](#contact)
+- [Citation](#citation)
+
 
 ## How to use SpliceBERT?
 
@@ -53,7 +59,7 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 ## Reproduce the analysis in manuscript  
 The codes to reproduce the analysis are available in [examples](./examples):  
 - [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
-- [variant analysis](./examples/01-variant) (related to Figure 2)  
+- [variant effect analysis](./examples/01-variant) (related to Figure 2)  
 - [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 3)  
 - [attention weight analysis](./examples/03-attention) (related to Figure 4)  
 
@@ -75,7 +81,6 @@ The following python packages or command line tools are also required to reprodu
 	- `gtfToGenePred` (optional)  
 
 ## Finetune SpliceBERT for splice sites/branchpoints prediction
-
 
 ## Contact
 For issues related to the scripts, create an issue at https://github.com/biomed-AI/SpliceBERT/issues.
