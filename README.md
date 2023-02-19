@@ -1,6 +1,6 @@
 # SpliceBERT: precursor messenger RNA langauge model pre-trained on vertebrate pre-mRNAs
 
-SpliceBERT is a pre-mRNA sequence language model pre-trained on over 2 million vertebrate pre-mRNA sequences.
+SpliceBERT ([manuscript](https://www.biorxiv.org/content/10.1101/2023.01.31.526427v1)) is a pre-mRNA sequence language model pre-trained on over 2 million vertebrate pre-mRNA sequences.
 It can be used to study RNA splicing and other biological problems related to pre-mRNA sequence.
 
 
@@ -18,14 +18,14 @@ examples:
 import torch
 from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification
 
-SPLICEBERT_PATH = "./SpliceBERT"
+SPLICEBERT_PATH = "/path/to/SpliceBERT/model"
 
 # load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(SPLICEBERT_PATH)
 
 # prepare input sequence
-seq = "ACGTACGtacgtaCGt"  ## WARNING: this is just a demo. SpliceBERT may not work on sequences shorter than 64nt as it was trained on sequences of 64-1024nt in length
-seq = ' '.join(list(seq.upper().replace("U", "T"))) # add whitespace
+seq = "ACGUACGuacguaCGu"  ## WARNING: this is just a demo. SpliceBERT may not work on sequences shorter than 64nt as it was trained on sequences of 64-1024nt in length
+seq = ' '.join(list(seq.upper().replace("U", "T"))) # U -> T and add whitespace
 input_ids = tokenizer.encode(seq) # warning: a [CLS] and a [SEP] token will be added to the start and the end of seq
 input_ids = torch.as_tensor(input_ids)
 input_ids = input_ids.unsqueeze(0) # add batch dimension
@@ -46,4 +46,50 @@ model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_lab
 # load pre-trained SpliceBERT for sequence classification
 model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3
 
+```
+
+## How to reproduce the analysis in manuscript?  
+The codes to reproduce the analysis are available in [examples](./examples):  
+- [conservative analysis](./examples/00-conservation) (related to Figure 1)  
+- [variants analysis](./examples/01-variant) (related to Figure 2)  
+- [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 3)  
+- [attention analysis](./examples/03-attention) (related to Figure 4)  
+
+Users could download all the data from [zenodo]() to run the codes.
+The following python packages or command line tools are also required to reproduce the results:  
+- Python packages:
+	- `transformers`  
+	- `pytorch`  
+	- `numpy`  
+	- `scipy`  
+	- `scikit-learn`  
+	- `scanpy` (v1.9+ is required)  
+	- `matplotlib`  
+	- `tqdm`  
+	- `pyBigWig` (optional)  
+- Command line tools:  
+	- `bedtools`  
+	- `MaxEntScan` (optional)  
+	- `gtfToGenePred` (optional)  
+
+## How to finetune SpliceBERT for splice sites/branchpoints prediction?
+
+
+## Contact
+For issues related to the scripts, create an issue at https://github.com/biomed-AI/SpliceBERT/issues.
+
+For any other questions, feel free to contact chenkenbio {at} gmail.com.
+
+## Citation
+
+```TeX
+@misc{chen_self-supervised_2023,
+	title = {Self-supervised learning on millions of pre-{mRNA} sequences improves sequence-based {RNA} splicing prediction},
+	url = {https://www.biorxiv.org/content/10.1101/2023.01.31.526427v1},
+	doi = {10.1101/2023.01.31.526427},
+	publisher = {bioRxiv},
+	author = {Chen, Ken and Zhou, Yue and Ding, Maolin and Wang, Yu and Ren, Zhixiang and Yang, Yuedong},
+	month = {Feb},
+	year = {2023}
+}
 ```
