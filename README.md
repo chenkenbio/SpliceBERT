@@ -48,7 +48,7 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 
 ```
 
-## How to reproduce the analysis in manuscript?  
+## Reproduce the analysis in manuscript?  
 The codes to reproduce the analysis are available in [examples](./examples):  
 - [conservative analysis](./examples/00-conservation) (related to Figure 1)  
 - [variants analysis](./examples/01-variant) (related to Figure 2)  
@@ -72,7 +72,7 @@ The following python packages or command line tools are also required to reprodu
 	- `MaxEntScan` (optional)  
 	- `gtfToGenePred` (optional)  
 
-## How to finetune SpliceBERT for splice sites/branchpoints prediction?
+## Finetune SpliceBERT for splice sites/branchpoints prediction?
 
 
 ## Contact

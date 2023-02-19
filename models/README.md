@@ -4,5 +4,5 @@
 - SpliceBERT.510nt: pre-trained on vertebrate mRNA sequence fragments of 510nt (fixed length)  
 - SpliceBERT-human.510nt: pre-trained on human mRNA sequence fragments of 510nt (fixed length)  
 
-**WARNING**: `SpliceBERT.510nt` and `SpliceBERT-human.510nt` may not work properly on sequences whose length is not 510nt
+**WARNING**: `SpliceBERT.510nt` and `SpliceBERT-human.510nt` may not work properly on sequences whose length is not 510nt (excluding [CLS] and [SEP]) without finetuning.
 
