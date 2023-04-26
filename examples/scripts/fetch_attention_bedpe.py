@@ -6,6 +6,7 @@ Date: 2023-01-10
 """
 
 import argparse
+import warnings
 from tqdm import tqdm
 import os
 import sys
@@ -16,8 +17,10 @@ from torch import Tensor
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, Subset
-from transformers import BertTokenizer, BertModel
-from utils import load_fasta, get_reverse_strand, encode_sequence, auto_open
+from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification, BertTokenizer, BertModel
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from utils import load_fasta, get_reverse_strand, auto_open, encode_sequence
+# from biock.genomics import encode_sequence
 import scanpy as sc
 
 def get_args():
@@ -66,7 +69,14 @@ class BEDPEData(Dataset):
                 # self.name2.append(name2)
                 chrom, p, _, _, q, _, name, _, strand, _ = line.split()
                 p, q = int(p), int(q)
-                tx_region, group, t1, t2, dimer1, dimer2, dist = name.split('|')
+                try:
+                    tx_region, group, t1, t2, dimer1, dimer2, dist = name.split('|')
+                except:
+                    tx_region = name.split('|')[0]
+                    group = "__unknown__"
+                    t1, t2 = ("D", "A") if strand == '+' else ("A", "D")
+                    warnings.warn("Invalid name type")
+
                 tx_start, tx_end = tx_region.split(':')[1].split('-')
                 tx_start, tx_end = int(tx_start), int(tx_end)
                 left = (p + q) //2 - self.seq_len // 2
