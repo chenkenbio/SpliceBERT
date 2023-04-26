@@ -144,6 +144,8 @@ if __name__ == "__main__":
 
     embedding = np.concatenate(embedding, axis=0)
 
+    print("shape:", embedding.shape, file=sys.stderr)
+
     if args.model == "onehot":
         # embedding: (N, S, 4)
         length = embedding.shape[1]
