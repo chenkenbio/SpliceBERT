@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+"""
+Author: Ken Chen
+Email: chenkenbio@gmail.com
+Date: 2022-11-24
+"""
+
+import argparse
+import os
+import json
+import sys
+import numpy as np
+from tqdm import tqdm
+import torch
+from torch import Tensor
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, Dataset, Subset
+import pyBigWig
+import h5py
+# from biock import Hdf5Genome
+# from selene2.selene_sdk.targets import GenomicFeatures
+from biock.external.selene.selene_sdk.targets import GenomicFeatures
+from biock import UCSC_HG19_FASTA as HG19_FASTA
+from biock.genomics.genome import EasyGenome
+from biock.pytorch.tokenizer import tokenizer1bp, BertTokenizer
+
+def mask_bases(input_ids: Tensor, vocab_size, num_special_tokens: int, mask_token_id: int, mlm_rate=0.15, edge_size: int=0, rand_rate=0.1, unchange_rate=0.1):
+    assert input_ids.ndim == 1
+    input_ids = input_ids.clone()
+
+    label = -100 * torch.ones(input_ids.size(), dtype=torch.long)
+    
+    valid = input_ids >= num_special_tokens
+    prob = torch.rand(input_ids.size()) * valid
+    keep = (prob <= mlm_rate) & valid
+    label[keep] = input_ids[keep].clone()
+    if edge_size > 0:
+        label[:edge_size] = -100
+        label[-edge_size:] = -100
+    prob *= (prob <= mlm_rate) # set other to 0
+    prob /= mlm_rate
+
+    mask_inds = torch.where(prob > (rand_rate + unchange_rate))[0]
+    input_ids[mask_inds] = mask_token_id
+
+    shuffle_inds = torch.where((prob > unchange_rate) & (prob <= (rand_rate + unchange_rate)))[0]
+    input_ids[shuffle_inds] = torch.randint(low=num_special_tokens, high=vocab_size, size=shuffle_inds.size()) # skip 'N'
+
+    return input_ids, label
+
+class GenomicRegionData(Dataset):
+    def __init__(self, 
+            bed="/home/chenken/biock/biock/data/reference_genomes/hg19/gencode.v41lift37.canonical.tx.bed", 
+            bin_size=510, 
+            region="/home/chenken/biock/biock/data/reference_genomes/hg19/regions/regions.v41lift37.bed.gz", 
+            name_idx="/home/chenken/biock/biock/data/reference_genomes/hg19/regions/regions.v41lift37.names.json",
+            phastcons="/bigdat1/pub/UCSC/hg19/hg19.100way.phastCons.h5",
+            phylop="/bigdat1/pub/UCSC/hg19/hg19.100way.phyloP100way.h5",
+            tokenizer: BertTokenizer=tokenizer1bp,
+            genome=HG19_FASTA,
+        ) -> None:
+        super().__init__()
+        self.bed = bed
+        self.bin_size = bin_size
+        self.name2idx = json.load(open(name_idx))
+        self.annotation = GenomicFeatures(
+            input_path=region,
+            features=name_idx,
+            binary=True,
+            nt_level=True,
+        )
+
+        self.tokenizer = tokenizer
+        self.samples = list()
+        self.genome = EasyGenome(genome)
+        self.phastcons = h5py.File(phastcons, 'r')
+        self.phylop = h5py.File(phylop, 'r')
+        self.cls = np.asarray([self.tokenizer.cls_token_id], dtype=np.int8)
+        self.sep = np.asarray([self.tokenizer.sep_token_id], dtype=np.int8)
+        self.process()
+    
+    def process(self):
+        txs = dict()
+        with open(self.bed) as infile:
+            for l in tqdm(infile, desc="Loading bed: {}".format(self.bed)):
+                chrom, start, end, name, _, strand = l.strip('\n').split('\t')[:6]
+                if chrom == "chrY" or chrom == "chrM":
+                    continue
+                start, end = int(start), int(end)
+                _, _, gene_name, gene_type, _ = name.split('|')
+                if gene_name in txs and end - start < txs[gene_name][2] - txs[gene_name][1]:
+                    continue
+                txs[gene_name] = (chrom, start, end, strand, gene_type)
+        for gene_name in txs:
+            chrom, start, end, strand, gene_type = txs[gene_name]
+            for p in range(start - 100, end, self.bin_size):
+                self.samples.append((chrom, p, p + self.bin_size, strand))
+        self.samples = np.asarray(self.samples)
+    
+    def __getitem__(self, index):
+        chrom, start, end, strand = self.samples[index]
+        start, end = int(start), int(end)
+        annotation = self.annotation.get_feature_data(chrom, start, end).astype(np.int8)
+        phastcons = self.phastcons[chrom][start:end]
+        phylop = self.phylop[chrom][start:end]
+        if strand == '-':
+            annotation = annotation[::-1].copy()
+            phastcons = phastcons[::-1].copy()
+            phylop = phylop[::-1].copy()
+        # ids = self.genome.fetch_sequence(chrom, start, end, reverse=strand == '-', padding=-105) + 5
+        # ids_extend = self.genome.fetch_sequence(chrom, start - self.bin_size, end + self.bin_size, reverse=strand == '-', padding=-105) + 5 # for one-hot encoding of position
+        # ids = np.concatenate((self.cls, ids, self.sep))
+        # ids_extend = np.concatenate((self.cls, ids_extend, self.sep))
+        seq = self.genome.fetch_sequence(chrom, start, end, reverse=strand == '-', padding='N')
+        seq_extend = self.genome.fetch_sequence(chrom, start - self.bin_size, end + self.bin_size, reverse=strand == '-', padding='N')
+        is_repeat = torch.from_numpy(np.isin(list(seq), ['a', 't', 'c', 'g']).astype(np.int8))
+        # if torch.sum(is_repeat) > 0:
+            # print(chrom, start, end, strand, is_repeat.sum().item(), flush=True)
+        ids = self.tokenizer.encode(' '.join(seq.upper()))
+        ids_extend = self.tokenizer.encode(' '.join(seq_extend.upper()))
+        ids = torch.as_tensor(ids).long()
+        ids_extend = torch.as_tensor(ids_extend).long()
+        masked_ids, label = mask_bases(
+            ids.clone(), 
+            vocab_size=self.tokenizer.vocab_size, 
+            num_special_tokens=5,
+            mask_token_id=self.tokenizer.mask_token_id
+        )
+        phastcons = torch.as_tensor(phastcons)
+        phylop = torch.as_tensor(phylop)
+        annotation = torch.as_tensor(annotation)
+        return ids, masked_ids, ids_extend, label, phastcons, phylop, annotation, is_repeat
+    
+    def __len__(self):
+        return len(self.samples)
+    
