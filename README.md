@@ -58,11 +58,13 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 ## Reproduce the analysis in manuscript  
 The codes to reproduce the analysis are available in [examples](./examples):  
 - evolutionary conservation analysis (related to Figure 1)  
-- [variant effect analysis](./examples/01-variant) (related to Figure 2)  
-- [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 3)  
-- attention weight analysis (related to Figure 4)  
+- [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
+- [attention weight analysis](./examples/03-attention) (related to Figure 3)  
+- [variant effect analysis](./examples/01-variant) (related to Figure 4)  
+- [finetune for branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
+- [finetune for splice site prediction] (related to Figure 5)
 
-Users could download all the data to run the codes from zenodo.
+
 The following python packages or command line tools are also required to reproduce the results:  
 - Python packages:
 	- `transformers`  
