@@ -62,7 +62,7 @@ The codes to reproduce the analysis are available in [examples](./examples):
 - [attention weight analysis](./examples/03-attention) (related to Figure 3)  
 - [variant effect analysis](./examples/01-variant) (related to Figure 4)  
 - [finetune for branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
-- [finetune for splice site prediction] (related to Figure 5)
+- [finetune for splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
 
 
 The following python packages or command line tools are also required to reproduce the results:  
