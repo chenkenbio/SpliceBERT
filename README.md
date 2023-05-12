@@ -57,7 +57,7 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 
 ## Reproduce the analysis in manuscript  
 The codes to reproduce the analysis are available in [examples](./examples):  
-- evolutionary conservation analysis (related to Figure 1)  
+- [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
 - [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
 - [attention weight analysis](./examples/03-attention) (related to Figure 3)  
 - [variant effect analysis](./examples/01-variant) (related to Figure 4)  
