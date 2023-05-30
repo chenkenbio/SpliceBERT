@@ -1,12 +1,5 @@
 #!/bin/bash
 
-pos_data="GS"
-neg_data="GS_1"
-
-# model="../pretrained/mlm_on_tx"
-# prefix="splicebert-vert"
-
-
 model="../../models/SpliceBERT.510nt/"
 
 prefix="finetune_splicebert_on_spliceator"
