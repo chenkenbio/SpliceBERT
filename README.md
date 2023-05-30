@@ -20,7 +20,11 @@ SpliceBERT is implemented with [Huggingface](https://huggingface.co/docs/transfo
 SpliceBERT can be easily used for a series of downstream tasks through the official API.
 See [official guide](https://huggingface.co/docs/transformers/model_doc/bert) for more details.
 
-examples:
+- System requirements
+
+We recommend using a GPU with at least 4GB memory to run SpliceBERT, though it can also be run on CPU.
+
+**examples**:
 ```python
 import torch
 from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification
@@ -43,14 +47,14 @@ model = AutoModel.from_pretrained(SPLICEBERT_PATH) # load model
 last_hidden_state = model(input_ids).last_hidden_state # get hidden states from last layer
 hiddens_states = model(input_ids, output_hidden_states=True).hidden_states
 
-# get logits from MLM
+# get nucleotide type logits in masked language modeling
 model = AutoModelForMaskedLM.from_pretrained(SPLICEBERT_PATH) # load model
 logits = model(input_ids).logits
 
-# load pre-trained SpliceBERT for token classification
+# finetuning SpliceBERT for token classification tasks
 model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3
 
-# load pre-trained SpliceBERT for sequence classification
+# finetuning SpliceBERT for sequence classification tasks
 model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3
 
 ```
