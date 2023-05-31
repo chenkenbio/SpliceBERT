@@ -20,16 +20,16 @@ SpliceBERT is implemented with [Huggingface](https://huggingface.co/docs/transfo
 SpliceBERT can be easily used for a series of downstream tasks through the official API.
 See [official guide](https://huggingface.co/docs/transformers/model_doc/bert) for more details.
 
-- System requirements
+**System requirements**  
 
 We recommend using a GPU with at least 4GB memory to run SpliceBERT, though it can also be run on CPU.
 
-**examples**:
+**Examples**:
 ```python
 import torch
 from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification
 
-SPLICEBERT_PATH = "/path/to/SpliceBERT/model"
+SPLICEBERT_PATH = "/path/to/SpliceBERT/model"  # set the path to the folder of pre-trained SpliceBERT
 
 # load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(SPLICEBERT_PATH)
@@ -37,30 +37,30 @@ tokenizer = AutoTokenizer.from_pretrained(SPLICEBERT_PATH)
 # prepare input sequence
 seq = "ACGUACGuacguaCGu"  ## WARNING: this is just a demo. SpliceBERT may not work on sequences shorter than 64nt as it was trained on sequences of 64-1024nt in length
 seq = ' '.join(list(seq.upper().replace("U", "T"))) # U -> T and add whitespace
-input_ids = tokenizer.encode(seq) # warning: a [CLS] and a [SEP] token will be added to the start and the end of seq
-input_ids = torch.as_tensor(input_ids)
-input_ids = input_ids.unsqueeze(0) # add batch dimension
+input_ids = tokenizer.encode(seq) # N -> 5, A -> 6, C -> 7, G -> 8, T(U) -> 9. warning: a [CLS] and a [SEP] token will be added to the start and the end of seq
+input_ids = torch.as_tensor(input_ids) # convert python list to Tensor
+input_ids = input_ids.unsqueeze(0) # add batch dimension, shape: (batch_size, sequence_length)
 
 
 # get nucleotide embeddings (hidden states)
 model = AutoModel.from_pretrained(SPLICEBERT_PATH) # load model
 last_hidden_state = model(input_ids).last_hidden_state # get hidden states from last layer
-hiddens_states = model(input_ids, output_hidden_states=True).hidden_states
+hiddens_states = model(input_ids, output_hidden_states=True).hidden_states # hidden states from the embedding layer (nn.Embedding) and the 6 transformer encoder layers
 
 # get nucleotide type logits in masked language modeling
 model = AutoModelForMaskedLM.from_pretrained(SPLICEBERT_PATH) # load model
-logits = model(input_ids).logits
+logits = model(input_ids).logits # shape: (batch_size, sequence_length, vocab_size)
 
 # finetuning SpliceBERT for token classification tasks
-model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3
+model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
 
 # finetuning SpliceBERT for sequence classification tasks
-model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3
+model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
 
 ```
 
 ## Reproduce the analysis in manuscript  
-The codes to reproduce the analysis are available in [examples](./examples):  
+The codes for analyzing SpliceBERT are available in [examples](./examples):  
 - [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
 - [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
 - [attention weight analysis](./examples/03-attention) (related to Figure 3)  
@@ -71,20 +71,22 @@ The codes to reproduce the analysis are available in [examples](./examples):
 
 The following python packages or command line tools are also required to reproduce the results:  
 - Python packages:
-	- `transformers`  
-	- `pytorch`  
-	- `h5py`
-	- `numpy`  
-	- `scipy`  
-	- `scikit-learn`  
-	- `scanpy` (v1.9+ is required)  
-	- `matplotlib`  
-	- `tqdm`  
-	- `pyBigWig` (optional)  
+	- `transformers (4.24.0)`  
+	- `pytorch (1.12.1)`  
+	- `h5py (3.2.1)`
+	- `numpy (1.23.3)`  
+	- `scipy (1.8.0)`  
+	- `scikit-learn (1.1.1)`  
+	- `scanpy (1.8.2)`
+	- `matplotlib (3.5.1)`  
+	- `tqdm (4.64.0)`  
+	- `pyBigWig (0.3.18)` (optional)  
 - Command line tools:  
-	- `bedtools`  
-	- `MaxEntScan` (optional)  
-	- `gtfToGenePred` (optional)  
+	- `bedtools (2.30.0)`  
+	- `MaxEntScan (2004)` (optional)  
+	- `gtfToGenePred (v377)` (optional)  
+
+*Note: the version number is only used to illustrate the version of softwares used in our study. In most cases, users do not need to ensure that the versions are strictly the same to ours to run the codes*
 
 ## Contact
 For issues related to the scripts, create an issue at https://github.com/biomed-AI/SpliceBERT/issues.
@@ -97,12 +99,10 @@ For any other questions, feel free to contact chenkenbio {at} gmail.com.
 @article{Chen2023.01.31.526427,
 	author = {Chen, Ken and Zhou, Yue and Ding, Maolin and Wang, Yu and Ren, Zhixiang and Yang, Yuedong},
 	title = {Self-supervised learning on millions of pre-mRNA sequences improves sequence-based RNA splicing prediction},
-	elocation-id = {2023.01.31.526427},
 	year = {2023},
 	doi = {10.1101/2023.01.31.526427},
 	publisher = {Cold Spring Harbor Laboratory},
 	URL = {https://www.biorxiv.org/content/early/2023/02/03/2023.01.31.526427},
-	eprint = {https://www.biorxiv.org/content/early/2023/02/03/2023.01.31.526427.full.pdf},
 	journal = {bioRxiv}
 }
 ```
