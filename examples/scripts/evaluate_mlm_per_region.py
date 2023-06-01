@@ -27,18 +27,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, Subset
 
-from transformers import BertForMaskedLM
+from transformers import AutoModelForMaskedLM
 from torch.cuda.amp import autocast, GradScaler
 
 from sklearn.metrics import accuracy_score, balanced_accuracy_score
-from .utils import set_seed
+from utils import set_seed
+from config import SPLICEBERT_510, SPLICEBERT_HUMAN
 
 import analysis_embedding
 
 
 SPLICEBERT = {
-    "human":"/home/chenken/Documents/github/SpliceBERT/models/SpliceBERT-human.510nt",
-    "vertebrate": "/home/chenken/Documents/github/SpliceBERT/models/SpliceBERT.510nt",
+    "human": SPLICEBERT_HUMAN,
+    "vertebrate": SPLICEBERT_510,
 }
 
 
@@ -59,9 +60,8 @@ if __name__ == "__main__":
     subset = np.random.choice(np.arange(len(ds)), size=args.num_seqs, replace=False)
     loader = DataLoader(Subset(ds, indices=subset), batch_size=8, num_workers=8, shuffle=False)
 
-    splicebert = BertForMaskedLM.from_pretrained(SPLICEBERT["vertebrate"])
-    human_model = BertForMaskedLM.from_pretrained(SPLICEBERT["human"])
-    # os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+    splicebert = AutoModelForMaskedLM.from_pretrained(SPLICEBERT["vertebrate"])
+    human_model = AutoModelForMaskedLM.from_pretrained(SPLICEBERT["human"])
 
     device = torch.device("cuda")
     splicebert = splicebert.to(device)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
             del out
 
 
-            assert annotation.shape[0] == label.shape[0]
+            assert annotation.shape[0] == label.shape[0], "annotation and label should have the same length, but got {} and {}".format(annotation.shape, label.shape)
 
             keep = torch.where(label != -100)[0]
             all_anno.append(annotation[keep])

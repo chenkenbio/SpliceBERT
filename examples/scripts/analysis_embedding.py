@@ -15,9 +15,9 @@ from torch import Tensor
 from torch.utils.data import DataLoader, Dataset, Subset
 import h5py
 from transformers import AutoTokenizer
-from biock.external.selene.selene_sdk.targets import GenomicFeatures
-from .genome import EasyGenome
-from .config import SPLICEBERT, hg19_phylop, hg19_phastcons, hg19_regions, hg19_transcript, hg19
+from selene_custom.genomic_features import GenomicFeatures
+from genome import EasyGenome
+from config import SPLICEBERT, hg19_phylop, hg19_phastcons, hg19_regions, hg19_transcript, hg19
 
 def mask_bases(input_ids: Tensor, vocab_size, num_special_tokens: int, mask_token_id: int, mlm_rate=0.15, edge_size: int=0, rand_rate=0.1, unchange_rate=0.1):
     assert input_ids.ndim == 1
