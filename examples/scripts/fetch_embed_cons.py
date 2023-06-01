@@ -18,7 +18,7 @@ plt.rcParams.update(new_rc_params)
 import torch
 from torch.utils.data import DataLoader, Dataset, Subset
 
-from transformers import BertForMaskedLM
+from transformers import AutoModelForMaskedLM
 from torch.cuda.amp import autocast
 
 from utils import set_seed
@@ -50,9 +50,8 @@ if __name__ == "__main__":
     loader = DataLoader(Subset(ds, indices=subset), batch_size=8, num_workers=8, shuffle=False)
 
 
-    splicebert = BertForMaskedLM.from_pretrained(SPLICEBERT["vertebrate"])
-    human_model = BertForMaskedLM.from_pretrained(SPLICEBERT["human"])
-    # os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+    splicebert = AutoModelForMaskedLM.from_pretrained(SPLICEBERT["vertebrate"])
+    human_model = AutoModelForMaskedLM.from_pretrained(SPLICEBERT["human"])
 
     device = torch.device("cuda")
     splicebert = splicebert.to(device)
@@ -74,7 +73,7 @@ if __name__ == "__main__":
     }
 
     with torch.no_grad(), autocast():
-        for it, (ids, masked_ids, ids_extend, label, phastcons, phylop, annotation) in enumerate(tqdm(loader)):
+        for it, (ids, masked_ids, ids_extend, label, phastcons, phylop, annotation, _) in enumerate(tqdm(loader)):
             splicebert_results["ids_extend"].append(ids_extend[:, 1:-1].numpy())
             splicebert_results["phastcons"].append(phastcons.numpy())
             splicebert_results["phylop"].append(phylop.numpy())

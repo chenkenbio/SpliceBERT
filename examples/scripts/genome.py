@@ -12,7 +12,7 @@ import sys
 import warnings
 import h5py
 import numpy as np
-from .utils import load_fasta, get_reverse_strand, encode_sequence
+from utils import load_fasta, get_reverse_strand, encode_sequence
 from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union, TextIO
 
 
