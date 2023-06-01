@@ -14,7 +14,8 @@ import warnings
 import pickle
 import time
 import shutil
-from tqdm import tqdm
+import random
+import torch
 from collections import OrderedDict
 from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union
 from io import TextIOWrapper
@@ -560,3 +561,14 @@ def count_items(ar: List, sort_counts: bool=False, reverse: bool=True, fraction:
         total = len(ar)
         results = [list(x) + [round(x[1] / total, 3)] for x in results]
     return results
+
+def set_seed(seed: int, force_deterministic: bool=False):
+    # if float(torch.version.cuda) >= 10.2:
+    #     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    if force_deterministic:
+        logger.warning("torch.use_deterministic_algorithms was set to True!")
+        torch.use_deterministic_algorithms(True)
