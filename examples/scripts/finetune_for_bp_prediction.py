@@ -19,8 +19,8 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.utils.data import DataLoader, Dataset, Subset
 
-import biock
-from biock import make_directory, make_logger, get_run_info
+sys.path.append("../scripts")
+from utils import make_directory, make_logger, get_run_info, count_items
 from transformers import BertForTokenClassification, BertTokenizer, BertConfig, AutoModelForTokenClassification, AutoTokenizer, AutoConfig, get_polynomial_decay_schedule_with_warmup
 from transformers.modeling_outputs import ModelOutput
 import bp_dataset
