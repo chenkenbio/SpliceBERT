@@ -13,7 +13,6 @@ import gzip
 from glob import glob
 from tqdm import tqdm
 import numpy as np
-import biock
 import pandas as pd
 from importlib import reload
 from collections import defaultdict, OrderedDict

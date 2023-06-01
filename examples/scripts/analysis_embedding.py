@@ -5,25 +5,19 @@ Email: chenkenbio@gmail.com
 Date: 2022-11-24
 """
 
-import argparse
-import os
 import json
 import sys
+import gzip
 import numpy as np
 from tqdm import tqdm
 import torch
 from torch import Tensor
-import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, Subset
-import pyBigWig
 import h5py
-# from biock import Hdf5Genome
-# from selene2.selene_sdk.targets import GenomicFeatures
+from transformers import AutoTokenizer
 from biock.external.selene.selene_sdk.targets import GenomicFeatures
-from biock import UCSC_HG19_FASTA as HG19_FASTA
-from biock.genomics.genome import EasyGenome
-from biock.pytorch.tokenizer import tokenizer1bp, BertTokenizer
+from .genome import EasyGenome
+from .config import SPLICEBERT, hg19_phylop, hg19_phastcons, hg19_regions, hg19_transcript, hg19
 
 def mask_bases(input_ids: Tensor, vocab_size, num_special_tokens: int, mask_token_id: int, mlm_rate=0.15, edge_size: int=0, rand_rate=0.1, unchange_rate=0.1):
     assert input_ids.ndim == 1
@@ -51,14 +45,14 @@ def mask_bases(input_ids: Tensor, vocab_size, num_special_tokens: int, mask_toke
 
 class GenomicRegionData(Dataset):
     def __init__(self, 
-            bed="/home/chenken/biock/biock/data/reference_genomes/hg19/gencode.v41lift37.canonical.tx.bed", 
+            bed=hg19_transcript, 
             bin_size=510, 
-            region="/home/chenken/biock/biock/data/reference_genomes/hg19/regions/regions.v41lift37.bed.gz", 
-            name_idx="/home/chenken/biock/biock/data/reference_genomes/hg19/regions/regions.v41lift37.names.json",
-            phastcons="/bigdat1/pub/UCSC/hg19/hg19.100way.phastCons.h5",
-            phylop="/bigdat1/pub/UCSC/hg19/hg19.100way.phyloP100way.h5",
-            tokenizer: BertTokenizer=tokenizer1bp,
-            genome=HG19_FASTA,
+            region=hg19_regions, 
+            name_idx=hg19_regions.replace("bed.gz", "names.json"),
+            phastcons=hg19_phastcons,
+            phylop=hg19_phylop,
+            tokenizer: AutoTokenizer=AutoTokenizer.from_pretrained(SPLICEBERT),
+            genome=hg19,
         ) -> None:
         super().__init__()
         self.bed = bed
@@ -82,7 +76,7 @@ class GenomicRegionData(Dataset):
     
     def process(self):
         txs = dict()
-        with open(self.bed) as infile:
+        with gzip.open(self.bed, 'rt') as infile:
             for l in tqdm(infile, desc="Loading bed: {}".format(self.bed)):
                 chrom, start, end, name, _, strand = l.strip('\n').split('\t')[:6]
                 if chrom == "chrY" or chrom == "chrM":

@@ -20,7 +20,6 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 
 import misc_for_variant_analysis
 from misc_for_variant_analysis import INT2CHROM
-# from biock import HG19_FASTA, get_run_info, make_logger
 from utils import get_run_info, make_logger
 from config import hg19_phastcons as HG19_PHASTCONS
 from config import hg19_phylop as HG19_PHYLOP

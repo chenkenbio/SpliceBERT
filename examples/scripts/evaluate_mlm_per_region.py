@@ -31,7 +31,7 @@ from transformers import BertForMaskedLM
 from torch.cuda.amp import autocast, GradScaler
 
 from sklearn.metrics import accuracy_score, balanced_accuracy_score
-from biock.pytorch import set_seed
+from .utils import set_seed
 
 import analysis_embedding
 

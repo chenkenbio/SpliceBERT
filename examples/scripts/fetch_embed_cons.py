@@ -7,40 +7,22 @@ Date: 2022-11-24
 
 import os
 import sys
-import json
 import pickle
-import gzip
-from glob import glob
 from tqdm import tqdm
 import argparse
 import numpy as np
-import pandas as pd
-from importlib import reload
-from collections import defaultdict, OrderedDict
 import matplotlib.pyplot as plt
 new_rc_params = {'text.usetex': False, 'svg.fonttype': 'none' }
 plt.rcParams.update(new_rc_params)
 
-import h5py
-import pyBigWig
-import time
 import torch
-from torch import Tensor
-import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, Subset
 
 from transformers import BertForMaskedLM
-from torch.cuda.amp import autocast, GradScaler
+from torch.cuda.amp import autocast
 
-from sklearn.metrics import roc_auc_score, average_precision_score, precision_recall_curve, roc_curve
-from scipy.stats import pearsonr, spearmanr
-from biock.pytorch import set_seed
-from biock.plot._plot import hide_spines
-import scanpy as sc
-import anndata as ad
-from anndata import AnnData
-from scipy.sparse import csr_matrix, issparse
+from utils import set_seed
+from config import SPLICEBERT_510, SPLICEBERT_HUMAN
 
 import analysis_embedding
 
@@ -52,8 +34,8 @@ def get_args():
     return p
 
 SPLICEBERT = {
-    "human":"/home/chenken/Documents/github/SpliceBERT/models/SpliceBERT-human.510nt",
-    "vertebrate": "/home/chenken/Documents/github/SpliceBERT/models/SpliceBERT.510nt",
+    "human": SPLICEBERT_HUMAN,
+    "vertebrate": SPLICEBERT_510,
 }
 
 

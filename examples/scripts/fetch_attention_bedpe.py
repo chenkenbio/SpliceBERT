@@ -20,7 +20,6 @@ from torch.utils.data import DataLoader, Dataset, Subset
 from transformers import AutoTokenizer, AutoConfig, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification, BertTokenizer, BertModel
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from utils import load_fasta, get_reverse_strand, auto_open, encode_sequence
-# from biock.genomics import encode_sequence
 import scanpy as sc
 
 def get_args():

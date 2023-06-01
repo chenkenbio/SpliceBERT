@@ -120,7 +120,7 @@ if __name__ == "__main__":
     for t1, t2 in splits.split(X=range(len(ds)), groups=ds.chroms): # split by chromosome
         grouped_inds.append(t2)
     for fold in range(args.n_fold):
-        logger.info("Fold{} (n={}/{}): {}".format(fold, len(ds) - len(grouped_inds[fold]), len(grouped_inds[fold]), biock.count_items(ds.chroms[grouped_inds[fold]])))
+        logger.info("Fold{} (n={}/{}): {}".format(fold, len(ds) - len(grouped_inds[fold]), len(grouped_inds[fold]), count_items(ds.chroms[grouped_inds[fold]])))
         fold_outdir = make_directory("{}/fold{}".format(args.outdir, fold))
         model.save_pretrained(fold_outdir)
     del model
