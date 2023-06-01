@@ -19,7 +19,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, Subset
 import h5py
 from transformers import AutoTokenizer, BertTokenizer
-from utils import get_reverse_strand, load_fasta, auto_open, encode_sequence, GenePred
+from utils import get_reverse_strand, load_fasta, encode_sequence, GenePred
 from config import hg19 as HG19_FASTA
 from config import SPLICEBERT, rand200_transcripts, hg19_genepred, hg19_phastcons, hg19_phylop
 
@@ -83,7 +83,7 @@ class InSilicoMutagenesisData(Dataset):
                 "distant_exon": 0,
                 "distant_intron": 0,
             }
-            with open(self.bed) as infile:
+            with gzip.open(self.bed, 'rt') as infile:
                 for l in tqdm(infile, desc=os.path.basename(self.bed)):
                     chrom, start, end, name, _, strand = l.strip('\n').split('\t')[:6]
                     start, end = int(start), int(end)

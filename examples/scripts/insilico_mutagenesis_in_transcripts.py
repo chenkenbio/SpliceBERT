@@ -21,9 +21,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Subset
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from torch.cuda.amp import autocast
-sys.path.append('../scripts')
 import insilico_mutagenesis_data
-from utils import set_spines
 from config import SPLICEBERT_510
 
 
