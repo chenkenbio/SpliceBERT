@@ -17,7 +17,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, Subset
 from transformers import AutoTokenizer, AutoModel
 import scanpy as sc
-from utils import load_fasta, get_reverse_strand, encode_sequence, auto_open
+from utils import load_fasta, get_reverse_strand, encode_sequence, auto_open, get_run_info
 
 ONEHOT = np.concatenate((
     np.zeros((1, 4)),
@@ -107,6 +107,7 @@ class FiexedBedData(Dataset):
 if __name__ == "__main__":
     args = get_args().parse_args()
     np.random.seed(args.seed)
+    print(get_run_info(sys.argv, args=args))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -119,11 +120,17 @@ if __name__ == "__main__":
         k = np.log2(tokenizer.vocab_size - 5)//2
         if k > 2:
             k = int(round(k))
-            print("DNABERT-{}: {}".format(k, args.model))
         else:
             k = None
     ds = FiexedBedData(args.bed, 510, args.genome, tokenizer, dnabert=k)
-    loader = DataLoader(ds, batch_size=16, shuffle=False, collate_fn=ds.collate_fn, num_workers=16)
+    batch_size = int(os.environ.get("BATCH_SIZE", 8))
+    loader = DataLoader(
+        ds, 
+        batch_size=batch_size, 
+        shuffle=False, 
+        collate_fn=ds.collate_fn, 
+        num_workers=min(os.cpu_count(), batch_size)
+    )
 
     embedding = list()
     for it, (seq, i, j, name, name2) in enumerate(tqdm(loader)):
@@ -144,7 +151,7 @@ if __name__ == "__main__":
 
     embedding = np.concatenate(embedding, axis=0)
 
-    print("shape:", embedding.shape, file=sys.stderr)
+    print("embedding shape:", embedding.shape, file=sys.stderr)
 
     if args.model == "onehot":
         # embedding: (N, S, 4)
