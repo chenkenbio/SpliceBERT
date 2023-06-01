@@ -56,7 +56,13 @@ ds = insilico_mutagenesis_data.InSilicoMutagenesisData.load_dataset(fraction=0.1
 max_sample = 20000
 np.random.seed(2023)
 inds = np.random.permutation(np.arange(len(ds)))[:max_sample]
-loader = DataLoader(Subset(ds, indices=inds), batch_size=16, num_workers=16, collate_fn=ds.collate_fn, shuffle=True)
+batch_size = int(os.environ.get("BATCH_SIZE", 16))
+loader = DataLoader(
+    Subset(ds, indices=inds), 
+    batch_size=batch_size, 
+    num_workers=min(batch_size, os.cpu_count()), 
+    collate_fn=ds.collate_fn, 
+    shuffle=True)
 
 
 all_kls = list()
