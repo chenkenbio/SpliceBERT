@@ -25,7 +25,7 @@ import scanpy as sc
 def get_args():
     p = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument("bedpe", type=str, help="bedpe file")
-    p.add_argument("-b", "--batch-size", type=int, default=16)
+    p.add_argument("-b", "--batch-size", type=int, default=int(os.environ.get("BATCH_SIZE", 8)), help="batch size")
     p.add_argument("-m", "--model", type=str, required=True, help="model path")
     p.add_argument("-g", "--genome", type=str, required=True, help="genome path")
     p.add_argument("-o", "--output", type=str, required=True, help="output file")
