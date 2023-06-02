@@ -1,13 +1,13 @@
 #!/bin/bash
 
 test -d ./output || mkdir ./output
-source ../scripts.config.py
+source ../scripts/config.py
 
 model=$SPLICEBERT_510
 prefix="finetune_splicebert_on_spliceator"
 
 
-for group in donor acceptor; do
+for group in "donor" "acceptor"; do
     run_name="./output/${prefix}_GS-GS_1_${group}_cv"
     test -e ${run_name}.log && continue
     ./train_splicebert_cv.py \
