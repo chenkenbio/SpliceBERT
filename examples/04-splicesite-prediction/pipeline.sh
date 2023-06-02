@@ -5,6 +5,7 @@ source ../scripts/config.py
 
 model=$SPLICEBERT_510
 prefix="finetune_splicebert_on_spliceator"
+batch_size=16
 
 
 for group in "donor" "acceptor"; do
@@ -13,6 +14,7 @@ for group in "donor" "acceptor"; do
     ./train_splicebert_cv.py \
         -lr 0.00001 \
         -m ${model} \
+        -b ${batch_size} \
         -p ../data/spliceator/Training_data/Positive/GS/POS_${group}_600.csv \
         -n ../data/spliceator/Training_data/Negative/GS/GS_1/NEG_600_${group}.csv \
         -o ${run_name} &> ${run_name}.log
@@ -34,8 +36,8 @@ for ss_type in "donor" "acceptor"; do
             mkdir -p $outdir
             ./predict_by_splicebert.py \
                 -w $weight \
-                -p "../data/spliceator/Benchmarks/${species}/SA_sequences_donor_400_Final_3.positive.txt" \
-                -n "../data/spliceator/Benchmarks/${species}/SA_sequences_donor_400_Final_3.negative.txt" \
+                -p "../data/spliceator/Benchmarks/${species}/SA_sequences_${ss_type}_400_Final_3.positive.txt" \
+                -n "../data/spliceator/Benchmarks/${species}/SA_sequences_${ss_type}_400_Final_3.negative.txt" \
                 -o $outdir &> ${outdir}.log
         done
         wait 
