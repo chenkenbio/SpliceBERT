@@ -20,6 +20,14 @@ SpliceBERT is implemented with [Huggingface](https://huggingface.co/docs/transfo
 SpliceBERT can be easily used for a series of downstream tasks through the official API.
 See [official guide](https://huggingface.co/docs/transformers/model_doc/bert) for more details.
 
+**Download SpliceBERT**
+
+- [SpliceBERT.1024nt.tar.gz](https://github.com/biomed-AI/SpliceBERT/releases/download/v0.1/SpliceBERT.1024nt.tar.gz)
+- [SpliceBERT.510nt.tar.gz](https://github.com/biomed-AI/SpliceBERT/releases/download/v0.1/SpliceBERT.510nt.tar.gz)
+- [SpliceBERT-human.510nt.tar.gz](https://github.com/biomed-AI/SpliceBERT/releases/download/v0.1/SpliceBERT-human.510nt.tar.gz)
+
+ 	The model weights are also available at [zenodo](https://doi.org/10.5281/zenodo.7995778).
+
 **System requirements**  
 
 We recommend using a GPU with at least 4GB memory to run SpliceBERT, though it can also be run on CPU.
@@ -60,13 +68,17 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 ```
 
 ## Reproduce the analysis in manuscript  
+
+Before running the codes, run `bash setup.sh` in the `./examples` folder to compile the codes written in cython (`cython` is required).  
+Then, run `bash download.sh` to fetch the data used in the analysis.
+
 The codes for analyzing SpliceBERT are available in [examples](./examples):  
 - [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
 - [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
 - [attention weight analysis](./examples/03-attention) (related to Figure 3)  
 - [variant effect analysis](./examples/01-variant) (related to Figure 4)  
-- [finetune for branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
-- [finetune for splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
+- [branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
+- [splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
 
 
 The following python packages or command line tools are also required to reproduce the results:  
@@ -81,13 +93,19 @@ The following python packages or command line tools are also required to reprodu
 	- `matplotlib (3.5.1)`  
 	- `seaborn (0.11.2)`
 	- `tqdm (4.64.0)`  
-	- `pyBigWig (0.3.18)` (optional)  
-- Command line tools:  
+	- `pyBigWig (0.3.18)`
+	- `cython (0.29.28)`
+- Command line tools (optional):  
 	- `bedtools (2.30.0)`  
-	- `MaxEntScan (2004)` (optional)  
-	- `gtfToGenePred (v377)` (optional)  
+	- `MaxEntScan (2004)`
+	- `gtfToGenePred (v377)`
+
+
 
 *Note: the version number is only used to illustrate the version of softwares used in our study. In most cases, users do not need to ensure that the versions are strictly the same to ours to run the codes*
+
+## Data avilability
+The model weights and data for running the scripts are available at [zenodo](https://doi.org/10.5281/zenodo.7995778).
 
 ## Contact
 For issues related to the scripts, create an issue at https://github.com/biomed-AI/SpliceBERT/issues.
