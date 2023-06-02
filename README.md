@@ -7,6 +7,7 @@ It can be used to study RNA splicing and other biological problems related to pr
 
 - [How to use SpliceBERT?](#how-to-use-splicebert)
 - [Reproduce the analysis in manuscript](#reproduce-the-analysis-in-manuscript)
+- [Data availability](#Data-availability)  
 - [Contact](#contact)
 - [Citation](#citation)
 
@@ -100,7 +101,7 @@ The following python packages or command line tools are also required to reprodu
 
 *Note: the version number is only used to illustrate the version of softwares used in our study. In most cases, users do not need to ensure that the versions are strictly the same to ours to run the codes*
 
-## Data avilability
+## Data availability
 The model weights and data for running the scripts are available at [zenodo](https://doi.org/10.5281/zenodo.7995778).
 
 ## Contact
