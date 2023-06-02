@@ -8,6 +8,7 @@ import os
 import torch
 import warnings
 import numpy as np
+import gzip
 from tqdm import tqdm
 from collections import defaultdict
 from transformers import BertForMaskedLM, BertTokenizer
@@ -64,7 +65,7 @@ class ExonCenterVariant(Dataset):
         self.distances = list()
         self.mutation_ids = list()
         self.groups = list()
-        with open(vcf) as infile:
+        with gzip.open(vcf, 'rt') as infile:
             for l in infile:
                 if l.startswith('#'):
                     continue
