@@ -1,12 +1,14 @@
 #!/bin/bash
 
-source ../scripts/config.py
+test -d output || mkdir -p output
 
-run_script.sh -n 1 ../scripts/finetune_for_bp_prediction.py \
+SPLICEBERT_510="../../models/SpliceBERT.510nt/"
+
+./finetune_for_bp_prediction.py \
     -m $SPLICEBERT_510 \
-    -o train_mercer_bp &> train_mercer_bp.log
+    -o ./output/train_mercer_bp &> ./output/train_mercer_bp.log
 
-cat ./train_mercer_bp/fold*/test_results.txt > train_mercer_bp.all_prediction.txt # combine predictions in test folds
+cat ./output/train_mercer_bp/fold*/test_results.txt > ./output/train_mercer_bp.all_prediction.txt # combine predictions in test folds
 
 # usage: finetune_for_bp_prediction.py [-h] [--dnabert] [--no-pretrain]
 #                                      [--freeze-bert FREEZE_BERT] [-n N_FOLD]
