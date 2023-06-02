@@ -79,6 +79,7 @@ The following python packages or command line tools are also required to reprodu
 	- `scikit-learn (1.1.1)`  
 	- `scanpy (1.8.2)`
 	- `matplotlib (3.5.1)`  
+	- `seaborn (0.11.2)`
 	- `tqdm (4.64.0)`  
 	- `pyBigWig (0.3.18)` (optional)  
 - Command line tools:  

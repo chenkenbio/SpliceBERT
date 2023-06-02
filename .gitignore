@@ -127,3 +127,19 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+examples/scripts/_encode_sequence.c
+examples/scripts/selene_custom/_genomic_features.c
+examples/scripts/_sequence_to_kmer_list.c
+*.bed.gz
+*.pkl
+*.bed.gz.tbi
+*.bedpe.gz
+*.vcf.gz
+*.jpg
+*.svg
+*.pdf
+nohup.out
+data/
+output/
+models/
