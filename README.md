@@ -78,8 +78,11 @@ The codes for analyzing SpliceBERT are available in [examples](./examples):
 - [splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
 
 
-The following python packages or command line tools are also required to reproduce the results:  
+We generated the results in this manuscript under the following environment:
+- System:
+	- Ubuntu 20.04 LTS
 - Python packages:
+	- `Python (3.9.7)`
 	- `transformers (4.24.0)`  
 	- `pytorch (1.12.1)`  
 	- `h5py (3.2.1)`
@@ -92,7 +95,7 @@ The following python packages or command line tools are also required to reprodu
 	- `tqdm (4.64.0)`  
 	- `pyBigWig (0.3.18)`
 	- `cython (0.29.28)`
-- Command line tools (optional):  
+- Command line tools:  
 	- `bedtools (2.30.0)`  
 	- `MaxEntScan (2004)`
 	- `gtfToGenePred (v377)`
