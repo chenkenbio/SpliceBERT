@@ -27,7 +27,7 @@ The weights of SpliceBERT can be downloaded from [zenodo](https://doi.org/10.528
 
 **System requirements**  
 
-We recommend using a GPU with at least 4GB memory to run SpliceBERT, though it can also be run on CPU.
+We recommend running SpliceBERT on a Linux system with a NVIDIA GPU of at least 4GB memory. (Running our model with only CPU is possible, but it will very slow.)
 
 **Examples**:
 ```python
