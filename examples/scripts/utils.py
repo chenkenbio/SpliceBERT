@@ -28,6 +28,12 @@ from matplotlib.axes import Axes
 import logging
 logger = logging.getLogger(__name__)
 
+def scientific_notation(x, decimal: int=3):
+    template = "{:." + str(decimal) + "e}"
+    number, exp = template.format(x).split('e')
+    exp = int(exp)
+    return r"$%s\times 10^{%d}$" % (number, exp)
+
 def auto_open(input: Union[str, TextIOWrapper], mode='rt') -> TextIOWrapper:
     if isinstance(input, str):
         if input == '-':
