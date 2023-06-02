@@ -22,11 +22,7 @@ See [official guide](https://huggingface.co/docs/transformers/model_doc/bert) fo
 
 **Download SpliceBERT**
 
-- [SpliceBERT.1024nt.tar.gz](https://github.com/biomed-AI/SpliceBERT/releases/download/v0.1/SpliceBERT.1024nt.tar.gz)
-- [SpliceBERT.510nt.tar.gz](https://github.com/biomed-AI/SpliceBERT/releases/download/v0.1/SpliceBERT.510nt.tar.gz)
-- [SpliceBERT-human.510nt.tar.gz](https://github.com/biomed-AI/SpliceBERT/releases/download/v0.1/SpliceBERT-human.510nt.tar.gz)
-
- 	The model weights are also available at [zenodo](https://doi.org/10.5281/zenodo.7995778).
+The weights of SpliceBERT can be downloaded from [zenodo](https://doi.org/10.5281/zenodo.7995778): https://zenodo.org/record/7995778/files/models.tar.gz?download=1
 
 **System requirements**  
 
@@ -69,8 +65,8 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 
 ## Reproduce the analysis in manuscript  
 
-Before running the codes, run `bash setup.sh` in the `./examples` folder to compile the codes written in cython (`cython` is required).  
-Then, run `bash download.sh` to fetch the data used in the analysis.
+Before running the codes, run `bash download.sh` to fetch the data used in the analysis.
+Then, run `bash setup.sh` in the `./examples` folder to compile the codes written in cython (`cython` is required).  
 
 The codes for analyzing SpliceBERT are available in [examples](./examples):  
 - [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
