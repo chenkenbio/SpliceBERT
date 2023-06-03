@@ -21,7 +21,7 @@ for mtype in vert human; do
             model_path=$SPLICEBERT_HUMAN
         fi
         log=${output}.log
-        test -e $log && echo "found $output, skip" && continue
+        test -e $output && echo "found $output, skip" && continue
         ../scripts/analyze_vexseq_mfass.py \
             -d $db \
             -m $model_path \
@@ -33,7 +33,7 @@ for k in 3 4 5 6; do
     for db in "vexseq" "mfass"; do
         output=./output/${db}.DNABERT${k}.output.pkl
         log=${output}.log
-        test -e $log && echo "found $output, skip" && continue
+        test -e $output && echo "found $output, skip" && continue
         ../scripts/analyze_vexseq_mfass.py \
             -d $db \
             -m "$DNABERT_PREFIX/$k-new-12w-0" \
