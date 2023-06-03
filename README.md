@@ -69,13 +69,15 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 Before running the codes, run `bash download.sh` to fetch the data used in the analysis.
 Then, run `bash setup.sh` in the `./examples` folder to compile the codes written in cython (`cython` is required).  
 
+Pre-computed results of section 1-4 are available at [Google Drive](https://drive.google.com/file/d/1TCwbhyMiBP1bGEQcZj1qTH-Rif7Ee93P/view?usp=sharing). Users can download the results to `./examples` and decompress it to skip the step of running bash script `pipeline.sh` in jupyter notebooks.
+
 The codes for analyzing SpliceBERT are available in [examples](./examples):  
-- [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
-- [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
-- [attention weight analysis](./examples/03-attention) (related to Figure 3)  
-- [variant effect analysis](./examples/01-variant) (related to Figure 4)  
-- [branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
-- [splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
+1. [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
+2. [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
+3. [attention weight analysis](./examples/03-attention) (related to Figure 3)  
+4. [variant effect analysis](./examples/01-variant) (related to Figure 4)  
+5. [branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
+6. [splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
 
 
 We generated the results in this manuscript under the following environment:
