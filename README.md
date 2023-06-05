@@ -7,7 +7,7 @@ It can be used to study RNA splicing and other biological problems related to pr
 
 - [Data availability](#Data-availability)  
 - [How to use SpliceBERT?](#how-to-use-splicebert)
-- [Reproduce the analysis in manuscript](#reproduce-the-analysis-in-manuscript)
+- [Reproduce the analysis](#reproduce-the-analysis)
 - [Contact](#contact)
 - [Citation](#citation)
 
