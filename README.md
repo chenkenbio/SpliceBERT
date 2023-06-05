@@ -99,18 +99,20 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 	```bash
 	git clone git@github.com:biomed-AI/SpliceBERT.git
 	cd SpliceBERT
-	bash download.sh # download model weights and data, or you can manually download them from [zenodo](https://doi.org/10.5281/zenodo.7995778)
+	bash download.sh # download model weights and data, or manually download them from [zenodo](https://doi.org/10.5281/zenodo.7995778)
 	cd examples
 	bash setup.sh # compile selene utils, cython is required
 	```
 
-3. (Optional) Download pre-computed results for section 1-4 from [Google Drive](https://drive.google.com/file/d/1TCwbhyMiBP1bGEQcZj1qTH-Rif7Ee93P/view?usp=sharing) and decompress it in the `examples` folder.  
+3. (Optional) Download pre-computed results for section 1-4 from [Google Drive](https://drive.google.com/file/d/1TCwbhyMiBP1bGEQcZj1qTH-Rif7Ee93P/view?usp=sharing) and decompress them in the `examples` folder.  
 	```bash
-	# users should manually put `pre-computed_results.tar.gz` in the `./examples` folder and run the following command to decompress it
+	# users should manually download `pre-computed_results.tar.gz` and put it in the `./examples` folder and run the following command to decompress it
 	tar -zxvf pre-computed_results.tar.gz
 	```
+	If pre-computed results have been downloaded and decompressed correctly, 
+	users can skip running `pipeline.sh` in the jupyter notebooks of section 1-4.
 
-4. Run the scripts in jupyter notebook (section 1-4) or bash script `pipeline.sh` (section 5-6):
+4. Run jupyter notebooks (section 1-4) or bash scripts `pipeline.sh` (section 5-6):
 
 	- [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
 	- [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
