@@ -5,11 +5,15 @@ It can be used to study RNA splicing and other biological problems related to pr
 
 ![SpliceBERT overview](./overview.png)
 
+- [Data availability](#Data-availability)  
 - [How to use SpliceBERT?](#how-to-use-splicebert)
 - [Reproduce the analysis in manuscript](#reproduce-the-analysis-in-manuscript)
-- [Data availability](#Data-availability)  
 - [Contact](#contact)
 - [Citation](#citation)
+
+
+## Data availability
+The model weights and data for analysis are available at [zenodo:7995778](https://doi.org/10.5281/zenodo.7995778).
 
 
 ## How to use SpliceBERT?
@@ -64,50 +68,57 @@ model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_
 
 ```
 
-## Reproduce the analysis in manuscript  
+## Reproduce the analysis
 
-Before running the codes, run `bash download.sh` to fetch the data used in the analysis.
-Then, run `bash setup.sh` in the `./examples` folder to compile the codes written in cython (`cython` is required).  
+1. Configure the environment. 
 
-Pre-computed results of section 1-4 are available at [Google Drive](https://drive.google.com/file/d/1TCwbhyMiBP1bGEQcZj1qTH-Rif7Ee93P/view?usp=sharing). Users can download the results to `./examples` and decompress it to skip the step of running bash script `pipeline.sh` in jupyter notebooks.
+	We run the scripts in a conda environment with python 3.9.7 on a Linux system (Ubuntu 20.04.3 LTS).
+	The required packages are:
+	- Python packages:
+		- `Python (3.9.7)`
+		- `transformers (4.24.0)`  
+		- `pytorch (1.12.1)`  
+		- `h5py (3.2.1)`
+		- `numpy (1.23.3)`  
+		- `scipy (1.8.0)`  
+		- `scikit-learn (1.1.1)`  
+		- `scanpy (1.8.2)`
+		- `matplotlib (3.5.1)`  
+		- `seaborn (0.11.2)`
+		- `tqdm (4.64.0)`  
+		- `pyBigWig (0.3.18)`
+		- `cython (0.29.28)`
+	- Command line tools (optional):  
+		- `bedtools (2.30.0)`  
+		- `MaxEntScan (2004)`
+		- `gtfToGenePred (v377)`
 
-The codes for analyzing SpliceBERT are available in [examples](./examples):  
-1. [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
-2. [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
-3. [attention weight analysis](./examples/03-attention) (related to Figure 3)  
-4. [variant effect analysis](./examples/01-variant) (related to Figure 4)  
-5. [branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
-6. [splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
+	*Note: the version number is only used to illustrate the version of softwares used in our study. In most cases, users do not need to ensure that the versions are strictly the same to ours to run the codes*
 
+2. Clone this repository, download data and setup scripts.  
+	```bash
+	git clone git@github.com:biomed-AI/SpliceBERT.git
+	cd SpliceBERT
+	bash download.sh # download model weights and data, or you can manually download them from [zenodo](https://doi.org/10.5281/zenodo.7995778)
+	cd examples
+	bash setup.sh # compile selene utils, cython is required
+	```
 
-We generated the results in this manuscript under the following environment:
-- System:
-	- Ubuntu 20.04 LTS
-- Python packages:
-	- `Python (3.9.7)`
-	- `transformers (4.24.0)`  
-	- `pytorch (1.12.1)`  
-	- `h5py (3.2.1)`
-	- `numpy (1.23.3)`  
-	- `scipy (1.8.0)`  
-	- `scikit-learn (1.1.1)`  
-	- `scanpy (1.8.2)`
-	- `matplotlib (3.5.1)`  
-	- `seaborn (0.11.2)`
-	- `tqdm (4.64.0)`  
-	- `pyBigWig (0.3.18)`
-	- `cython (0.29.28)`
-- Command line tools:  
-	- `bedtools (2.30.0)`  
-	- `MaxEntScan (2004)`
-	- `gtfToGenePred (v377)`
+3. (Optional) Download pre-computed results for section 1-4 from [Google Drive](https://drive.google.com/file/d/1TCwbhyMiBP1bGEQcZj1qTH-Rif7Ee93P/view?usp=sharing) and decompress it in the `examples` folder.  
+	```bash
+	# users should manually put `pre-computed_results.tar.gz` in the `./examples` folder and run the following command to decompress it
+	tar -zxvf pre-computed_results.tar.gz
+	```
 
+4. Run the scripts in jupyter notebook (section 1-4) or bash script `pipeline.sh` (section 5-6):
 
+	- [evolutionary conservation analysis](./examples/00-conservation) (related to Figure 1)  
+	- [nucleotide embedding analysis](./examples/02-embedding) (related to Figure 2)  
+	- [attention weight analysis](./examples/03-attention) (related to Figure 3)  
+	- [variant effect analysis](./examples/01-variant) (related to Figure 4)  
+	- [branchpoint prediction](./examples/05-bp-prediction) (related to Figure 5)
+	- [splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
 
-*Note: the version number is only used to illustrate the version of softwares used in our study. In most cases, users do not need to ensure that the versions are strictly the same to ours to run the codes*
-
-## Data availability
-The model weights and data for running the scripts are available at [zenodo](https://doi.org/10.5281/zenodo.7995778).
 
 ## Contact
 For issues related to the scripts, create an issue at https://github.com/biomed-AI/SpliceBERT/issues.
