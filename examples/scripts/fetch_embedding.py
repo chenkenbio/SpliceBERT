@@ -84,6 +84,8 @@ class FiexedBedData(Dataset):
             seq = get_reverse_strand(seq)
         if self.tokenizer is None:
             seq = torch.from_numpy(ONEHOT[encode_sequence(seq)])
+        elif self.tokenizer == "seq":
+            pass
         else:
             if self.dnabert is None:
                 seq = torch.as_tensor(self.tokenizer.encode(' '.join(seq.upper())))
@@ -96,7 +98,10 @@ class FiexedBedData(Dataset):
     
     def collate_fn(self, batch):
         seq, i, j, name, name2 = map(list, zip(*batch))
-        seq = torch.stack(seq)
+        if isinstance(seq[0], str):
+            seq = [(str(i), x) for i, x in enumerate(seq)]
+        else:
+            seq = torch.stack(seq)
         i = np.asarray(i)
         j = np.asarray(j)
         name = np.asarray(name)
@@ -110,10 +115,18 @@ if __name__ == "__main__":
     print(get_run_info(sys.argv, args=args))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+    k = None
     if args.model == "onehot":
         tokenizer = None
         k = None
+    elif args.model.startswith("rnafm"):
+        sys.path.append("../..//related/RNA-FM")
+        import fm
+        model, alphabet = fm.pretrained.rna_fm_t12()
+        batch_converter = alphabet.get_batch_converter()
+        model.eval()  # disables dropout for deterministic results
+        model = model.to(device)
+        tokenizer = "seq"
     else:
         tokenizer = AutoTokenizer.from_pretrained(args.model)
         model = AutoModel.from_pretrained(args.model, add_pooling_layer=False, output_hidden_states=True).to(device)
@@ -137,9 +150,15 @@ if __name__ == "__main__":
         if args.model == "onehot":
             embedding.append(seq.numpy()) # (B, S, 4)
         else:
-            seq = seq.to(device)
-            # h = torch.stack(model(seq).hidden_states, dim=1).detach().cpu().numpy()
-            h = model(seq).hidden_states
+            if tokenizer == "seq":
+                batch_labels, batch_strs, batch_tokens = batch_converter(seq)
+                batch_tokens = batch_tokens.to(device)
+                h = model(batch_tokens, repr_layers=range(0, 13))["representations"]
+                h = [h[i].detach() for i in h]
+            else:
+                seq = seq.to(device)
+                # h = torch.stack(model(seq).hidden_states, dim=1).detach().cpu().numpy()
+                h = model(seq).hidden_states
             h = torch.stack(h, dim=1).detach()
             del seq
             tmp_embed = list()
