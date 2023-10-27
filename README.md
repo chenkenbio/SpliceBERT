@@ -1,7 +1,7 @@
-# SpliceBERT: precursor messenger RNA langauge model pre-trained on vertebrate pre-mRNAs
+# SpliceBERT: RNA langauge model pre-trained on vertebrate primary RNA sequences
 
-SpliceBERT ([manuscript](https://www.biorxiv.org/content/10.1101/2023.01.31.526427v1)) is a pre-mRNA sequence language model pre-trained on over 2 million vertebrate pre-mRNA sequences.
-It can be used to study RNA splicing and other biological problems related to pre-mRNA sequence.
+SpliceBERT ([manuscript](https://www.biorxiv.org/content/10.1101/2023.01.31.526427v1)) is a primary RNA sequence language model pre-trained on over 2 million vertebrate RNA sequences.
+It can be used to study RNA splicing and other biological problems related to RNA sequence.
 
 ![SpliceBERT overview](./overview.png)
 
