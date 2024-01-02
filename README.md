@@ -18,9 +18,11 @@ The model weights and data for analysis are available at [zenodo:7995778](https:
 
 ## How to use SpliceBERT?
 
-SpliceBERT is implemented with [Huggingface](https://huggingface.co/docs/transformers/index) `transformers` library in PyTorch. Users should install pytorch and transformers to load the SpliceBERT model.  
+SpliceBERT is implemented with [Huggingface](https://huggingface.co/docs/transformers/index) `transformers` and [FlashAttention](https://github.com/Dao-AILab/flash-attention) in PyTorch. Users should install pytorch, transformers and FlashAttention (optional) to load the SpliceBERT model.  
 - Install PyTorch: https://pytorch.org/get-started/locally/  
 - Install Huggingface transformers: https://huggingface.co/docs/transformers/installation  
+- Install FlashAttention (optional): https://github.com/Dao-AILab/flash-attention
+	- FlashAttention v2 does not support Turing GPUs, please use FlashAttention v1 instead.
 
 SpliceBERT can be easily used for a series of downstream tasks through the official API.
 See [official guide](https://huggingface.co/docs/transformers/model_doc/bert) for more details.
@@ -33,12 +35,17 @@ The weights of SpliceBERT can be downloaded from [zenodo](https://doi.org/10.528
 
 We recommend running SpliceBERT on a Linux system with a NVIDIA GPU of at least 4GB memory. (Running our model with only CPU is possible, but it will be very slow.)
 
-**Examples**:
-```python
-import torch
-from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification
 
-SPLICEBERT_PATH = "/path/to/SpliceBERT/model"  # set the path to the folder of pre-trained SpliceBERT
+**Examples**:
+We provide a demo script to show how to use SpliceBERT though the official API of Huggingface transformers.
+Users can also use SpliceBERT with FlashAttention by replacing the official API with the custom API, as shown in the commented lines. 
+**Note that flash-attention requires autocast to be enabled**
+
+Use SpliceBERT though the official API of Huggingface transformers:
+```python
+SPLICEBERT_PATH = "/path/to/SpliceBERT/models/model_folder"  # set the path to the folder of pre-trained SpliceBERT
+import torch
+from transformers import AutoTokenizer, BertModel, BertForMaskedLM, BertForTokenClassification
 
 # load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(SPLICEBERT_PATH)
@@ -50,7 +57,7 @@ input_ids = tokenizer.encode(seq) # N -> 5, A -> 6, C -> 7, G -> 8, T(U) -> 9. w
 input_ids = torch.as_tensor(input_ids) # convert python list to Tensor
 input_ids = input_ids.unsqueeze(0) # add batch dimension, shape: (batch_size, sequence_length)
 
-
+# use huggerface's official API to use SpliceBERT
 # get nucleotide embeddings (hidden states)
 model = AutoModel.from_pretrained(SPLICEBERT_PATH) # load model
 last_hidden_state = model(input_ids).last_hidden_state # get hidden states from last layer
@@ -65,8 +72,47 @@ model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_lab
 
 # finetuning SpliceBERT for sequence classification tasks
 model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
-
 ```
+
+Or use SpliceBERT with FlashAttention by replacing the official API with the custom API  
+```python
+SPLICEBERT_PATH = "/path/to/SpliceBERT/models/model_folder"  # set the path to the folder of pre-trained SpliceBERT
+import torch
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(SPICEBERT_PATH)))
+from splicebert_model import BertModel, BertForMaskedLM, BertForTokenClassification
+
+# load tokenizer
+tokenizer = AutoTokenizer.from_pretrained(SPLICEBERT_PATH)
+
+# prepare input sequence
+seq = "ACGUACGuacguaCGu"  ## WARNING: this is just a demo. SpliceBERT may not work on sequences shorter than 64nt as it was trained on sequences of 64-1024nt in length
+seq = ' '.join(list(seq.upper().replace("U", "T"))) # U -> T and add whitespace
+input_ids = tokenizer.encode(seq) # N -> 5, A -> 6, C -> 7, G -> 8, T(U) -> 9. warning: a [CLS] and a [SEP] token will be added to the start and the end of seq
+input_ids = torch.as_tensor(input_ids) # convert python list to Tensor
+input_ids = input_ids.unsqueeze(0) # add batch dimension, shape: (batch_size, sequence_length)
+
+# Or use custom BertModel with FlashAttention
+# get nucleotide embeddings (hidden states)
+model = AutoModel.from_pretrained(SPLICEBERT_PATH) # load model
+with autocast():
+	last_hidden_state = model(input_ids).last_hidden_state # get hidden states from last layer
+	hiddens_states = model(input_ids, output_hidden_states=True).hidden_states # hidden states from the embedding layer (nn.Embedding) and the 6 transformer encoder layers
+
+# get nucleotide type logits in masked language modeling
+model = AutoModelForMaskedLM.from_pretrained(SPLICEBERT_PATH) # load model
+with autocast():
+	logits = model(input_ids).logits # shape: (batch_size, sequence_length, vocab_size)
+
+# finetuning SpliceBERT for token classification tasks
+with autocast():
+	model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
+
+# finetuning SpliceBERT for sequence classification tasks
+with autocast():
+	model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
+```
+
 
 ## Reproduce the analysis
 
