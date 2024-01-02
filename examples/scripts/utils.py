@@ -578,3 +578,76 @@ def set_seed(seed: int, force_deterministic: bool=False):
     if force_deterministic:
         logger.warning("torch.use_deterministic_algorithms was set to True!")
         torch.use_deterministic_algorithms(True)
+
+
+def pr_curve(labels, scores):
+    r"""
+    An implementation of precision-recall curve, which is different from sklearn.metrics.precision_recall_curve in dealing with equal scores.
+    """
+    new_labels, new_scores = list(zip(*sorted(zip(labels, scores), key=lambda x:x[1], reverse=True)))
+    precision, recall, thresholds = list(), list(), list()
+    num_p = sum(new_labels)
+    tp, fp = 0, 0
+    for i in range(len(new_labels)):
+        if new_labels[i] == 1:
+            tp += 1
+        else:
+            fp += 1
+        if i == len(new_labels) - 1 or new_scores[i + 1] != new_scores[i]:
+            precision.append(tp/(tp + fp))
+            recall.append(tp / num_p)
+            thresholds.append(new_scores[i])
+    return np.asarray(precision), np.asarray(recall), np.asarray(thresholds)
+
+
+def boxplot_with_scatter(x, size=None, ax=None, max_sample=None, scatter_kwargs=dict(), **kwargs):
+    r"""
+    Not fully tested yet, just for quick plot
+    """
+    if ax is None:
+        ax = plt.subplot()
+
+    if "sym" not in kwargs:
+        kwargs["sym"] = ''
+    bb = ax.boxplot(x=x, **kwargs)
+    # bb2 = ax.boxplot(x=x2, **kwargs)
+
+    if not hasattr(x[0], "__iter__"):
+        x = [x]
+
+    vertical = kwargs.get("vert", True)
+    scatter_color = scatter_kwargs.get("c", None)
+    align_anchors = ax.get_xticks() if vertical else ax.get_yticks()
+    for i, ind in enumerate(align_anchors):
+        if type(scatter_color) is not str:
+            if hasattr(scatter_color, "__iter__"):
+                c = scatter_color[i]
+            else:
+                c = None
+        else:
+            c = scatter_color
+        scatter_kwargs['c'] = c
+
+        ar = np.asarray(x[i])
+        if max_sample is not None and len(ar) > max_sample:
+            ar = np.random.permutation(ar)[:max_sample]
+
+        if vertical:
+            try:
+                left, right = bb["boxes"][i].get_data()[0][:2]
+            except AttributeError:
+                left, right = bb["caps"][i].get_data()[i]
+            xs = np.random.randn(len(ar))
+            xmin, xmax = xs.min(), xs.max()
+            xs =  (2 * (xs - xmin) / (xmax - xmin) - 1) * (right - left) / 2 + ind
+            scatter = ax.scatter(x=xs, y=ar, s=size, **scatter_kwargs)
+        else:
+            try:
+                left, right = bb["boxes"][i].get_data()[0][:2]
+            except AttributeError:
+                left, right = bb["caps"][i].get_data()[i]
+
+            ys = np.random.randn(len(ar))
+            ymin, ymax = ys.min(), ys.max()
+            ys =  (2 * (ys - ymin) / (ymax - ymin) - 1) * (right - left) / 2 + ind
+            scatter = ax.scatter(x=ar, y=ys, s=size, **scatter_kwargs)
