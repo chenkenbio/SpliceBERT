@@ -37,9 +37,9 @@ We recommend running SpliceBERT on a Linux system with a NVIDIA GPU of at least 
 
 
 **Examples**:
-We provide a demo script to show how to use SpliceBERT though the official API of Huggingface transformers.
-Users can also use SpliceBERT with FlashAttention by replacing the official API with the custom API, as shown in the commented lines. 
-**Note that flash-attention requires autocast to be enabled**
+We provide a demo script to show how to use SpliceBERT though the official API of Huggingface transformers in the first part of the following code block.  
+Users can also use SpliceBERT with FlashAttention by replacing the official API with the custom API, as shown in the second part of the following code block.
+**Note that flash-attention requires automatic mixed precision (amp) mode to be enabled**
 
 Use SpliceBERT though the official API of Huggingface transformers:
 ```python
@@ -96,21 +96,21 @@ input_ids = input_ids.unsqueeze(0) # add batch dimension, shape: (batch_size, se
 # get nucleotide embeddings (hidden states)
 model = AutoModel.from_pretrained(SPLICEBERT_PATH) # load model
 with autocast():
-	last_hidden_state = model(input_ids).last_hidden_state # get hidden states from last layer
-	hiddens_states = model(input_ids, output_hidden_states=True).hidden_states # hidden states from the embedding layer (nn.Embedding) and the 6 transformer encoder layers
+    last_hidden_state = model(input_ids).last_hidden_state # get hidden states from last layer
+    hiddens_states = model(input_ids, output_hidden_states=True).hidden_states # hidden states from the embedding layer (nn.Embedding) and the 6 transformer encoder layers
 
 # get nucleotide type logits in masked language modeling
 model = AutoModelForMaskedLM.from_pretrained(SPLICEBERT_PATH) # load model
 with autocast():
-	logits = model(input_ids).logits # shape: (batch_size, sequence_length, vocab_size)
+    logits = model(input_ids).logits # shape: (batch_size, sequence_length, vocab_size)
 
 # finetuning SpliceBERT for token classification tasks
 with autocast():
-	model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
+    model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
 
 # finetuning SpliceBERT for sequence classification tasks
 with autocast():
-	model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
+    model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
 ```
 
 
