@@ -37,11 +37,7 @@ from transformers.activations import ACT2FN
 from transformers.modeling_outputs import (
     BaseModelOutputWithPastAndCrossAttentions,
     BaseModelOutputWithPoolingAndCrossAttentions,
-    CausalLMOutputWithCrossAttentions,
     MaskedLMOutput,
-    MultipleChoiceModelOutput,
-    NextSentencePredictorOutput,
-    QuestionAnsweringModelOutput,
     SequenceClassifierOutput,
     TokenClassifierOutput,
 )
@@ -233,7 +229,7 @@ class BertSelfAttention(nn.Module):
             # if encoder bi-directional self-attention `past_key_value` is always `None`
             past_key_value = (key_layer, value_layer)
 
-        if self.flash:
+        if self.flash and attention_mask is None:
             # query_layer, key_layer shape: (batch_size, num_heads, seq_len, head_size)
             # value_layer shape: (batch_size, num_heads, seq_len, head_size)
             query_layer = query_layer.permute(0, 2, 1, 3).contiguous() # (batch_size, seq_len, num_heads, head_size)
@@ -246,6 +242,7 @@ class BertSelfAttention(nn.Module):
             attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
 
             if self.position_embedding_type == "relative_key" or self.position_embedding_type == "relative_key_query":
+                raise NotImplementedError
                 query_length, key_length = query_layer.shape[2], key_layer.shape[2]
                 if use_cache:
                     position_ids_l = torch.tensor(key_length - 1, dtype=torch.long, device=hidden_states.device).view(
