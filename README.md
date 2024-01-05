@@ -36,16 +36,16 @@ The weights of SpliceBERT can be downloaded from [zenodo](https://doi.org/10.528
 We recommend running SpliceBERT on a Linux system with a NVIDIA GPU of at least 4GB memory. (Running our model with only CPU is possible, but it will be very slow.)
 
 
-**Examples**:
+**Examples**  
 We provide a demo script to show how to use SpliceBERT though the official API of Huggingface transformers in the first part of the following code block.  
 Users can also use SpliceBERT with FlashAttention by replacing the official API with the custom API, as shown in the second part of the following code block.
-**Note that flash-attention requires automatic mixed precision (amp) mode to be enabled**
+**Note that flash-attention requires automatic mixed precision (amp) mode to be enabled and currently it does not support `attention_mask`**
 
 Use SpliceBERT though the official API of Huggingface transformers:
 ```python
 SPLICEBERT_PATH = "/path/to/SpliceBERT/models/model_folder"  # set the path to the folder of pre-trained SpliceBERT
 import torch
-from transformers import AutoTokenizer, BertModel, BertForMaskedLM, BertForTokenClassification
+from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM, AutoModelForTokenClassification
 
 # load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(SPLICEBERT_PATH)
@@ -74,7 +74,7 @@ model = AutoModelForTokenClassification.from_pretrained(SPLICEBERT_PATH, num_lab
 model = AutoModelForSequenceClassification.from_pretrained(SPLICEBERT_PATH, num_labels=3) # assume the class number is 3, shape: (batch_size, sequence_length, num_labels)
 ```
 
-Or use SpliceBERT with FlashAttention by replacing the official API with the custom API  
+Or use SpliceBERT with FlashAttention by replacing the official API with the custom API (Currently flash-attention does not support attention_mask. As a result, the length of sequences in each batch should be the same)    
 ```python
 SPLICEBERT_PATH = "/path/to/SpliceBERT/models/model_folder"  # set the path to the folder of pre-trained SpliceBERT
 import torch
