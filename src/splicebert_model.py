@@ -229,7 +229,7 @@ class BertSelfAttention(nn.Module):
             # if encoder bi-directional self-attention `past_key_value` is always `None`
             past_key_value = (key_layer, value_layer)
 
-        if self.flash and attention_mask is None:
+        if self.flash:
             # query_layer, key_layer shape: (batch_size, num_heads, seq_len, head_size)
             # value_layer shape: (batch_size, num_heads, seq_len, head_size)
             query_layer = query_layer.permute(0, 2, 1, 3).contiguous() # (batch_size, seq_len, num_heads, head_size)
