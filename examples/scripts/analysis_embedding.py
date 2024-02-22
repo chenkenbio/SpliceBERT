@@ -19,7 +19,15 @@ from selene_custom.genomic_features import GenomicFeatures
 from genome import EasyGenome
 from config import SPLICEBERT, hg19_phylop, hg19_phastcons, hg19_regions, hg19_transcript, hg19
 
-def mask_bases(input_ids: Tensor, vocab_size, num_special_tokens: int, mask_token_id: int, mlm_rate=0.15, edge_size: int=0, rand_rate=0.1, unchange_rate=0.1):
+def encode_dnabert(seq: str, k: int):
+    seq_new = list()
+    N = len(seq)
+    seq = "N" * (k//2) + seq.upper() + "N" * k
+    for i in range(k//2, N + k//2):
+        seq_new.append(seq[i-k//2:i-k//2+k])
+    return ' '.join(seq_new)
+
+def mask_bases(input_ids: Tensor, vocab_size, num_special_tokens: int, mask_token_id: int, mlm_rate=0.15, edge_size: int=0, rand_rate=0.1, unchange_rate=0.1, mask_left: int=0, mask_right: int=0):
     assert input_ids.ndim == 1
     input_ids = input_ids.clone()
 
@@ -37,9 +45,21 @@ def mask_bases(input_ids: Tensor, vocab_size, num_special_tokens: int, mask_toke
 
     mask_inds = torch.where(prob > (rand_rate + unchange_rate))[0]
     input_ids[mask_inds] = mask_token_id
+    if mask_left + mask_right > 0:
+        for i in mask_inds:
+            for j in range(i-mask_left, i+mask_right+1):
+                if j >= 0 and j < input_ids.size(0):
+                    input_ids[j] = mask_token_id
 
     shuffle_inds = torch.where((prob > unchange_rate) & (prob <= (rand_rate + unchange_rate)))[0]
     input_ids[shuffle_inds] = torch.randint(low=num_special_tokens, high=vocab_size, size=shuffle_inds.size()) # skip 'N'
+    if mask_left + mask_right > 0:
+        for i in shuffle_inds:
+            for j in range(i - mask_left, i + mask_right + 1):
+                if j >= 0 and j < input_ids.size(0):
+                    if j != i:
+                        input_ids[j] = np.random.randint(low=num_special_tokens, high=vocab_size) # skip 'N'
+
 
     return input_ids, label
 
@@ -53,9 +73,11 @@ class GenomicRegionData(Dataset):
             phylop=hg19_phylop,
             tokenizer: AutoTokenizer=AutoTokenizer.from_pretrained(SPLICEBERT),
             genome=hg19,
+            dnabert_k: int=None
         ) -> None:
         super().__init__()
         self.bed = bed
+        self.dnabert_k = dnabert_k
         self.bin_size = bin_size
         self.name2idx = json.load(open(name_idx))
         self.annotation = GenomicFeatures(
@@ -111,15 +133,21 @@ class GenomicRegionData(Dataset):
         is_repeat = torch.from_numpy(np.isin(list(seq), ['a', 't', 'c', 'g']).astype(np.int8))
         # if torch.sum(is_repeat) > 0:
             # print(chrom, start, end, strand, is_repeat.sum().item(), flush=True)
-        ids = self.tokenizer.encode(' '.join(seq.upper()))
-        ids_extend = self.tokenizer.encode(' '.join(seq_extend.upper()))
+        if self.dnabert_k:
+            ids = self.tokenizer.encode(encode_dnabert(seq, self.dnabert_k))
+            ids_extend = self.tokenizer.encode(encode_dnabert(seq_extend, self.dnabert_k))
+        else:
+            ids = self.tokenizer.encode(' '.join(seq.upper()))
+            ids_extend = self.tokenizer.encode(' '.join(seq_extend.upper()))
         ids = torch.as_tensor(ids).long()
         ids_extend = torch.as_tensor(ids_extend).long()
         masked_ids, label = mask_bases(
             ids.clone(), 
             vocab_size=self.tokenizer.vocab_size, 
             num_special_tokens=5,
-            mask_token_id=self.tokenizer.mask_token_id
+            mask_token_id=self.tokenizer.mask_token_id,
+            mask_left=(self.dnabert_k - 1 - self.dnabert_k//2) if self.dnabert_k else 0,
+            mask_right=(self.dnabert_k//2) if self.dnabert_k else 0,
         )
         phastcons = torch.as_tensor(phastcons)
         phylop = torch.as_tensor(phylop)
