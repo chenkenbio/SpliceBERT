@@ -79,6 +79,7 @@ SPLICEBERT_PATH = "/path/to/SpliceBERT/models/model_folder"  # set the path to t
 import torch
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(SPICEBERT_PATH)))
+from transformers import AutoTokenizer
 from splicebert_model import BertModel, BertForMaskedLM, BertForTokenClassification
 
 # load tokenizer
