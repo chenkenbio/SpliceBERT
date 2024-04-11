@@ -1,7 +1,8 @@
 # SpliceBERT: RNA langauge model pre-trained on vertebrate primary RNA sequences
 
-SpliceBERT ([manuscript](https://www.biorxiv.org/content/10.1101/2023.01.31.526427v1)) is a primary RNA sequence language model pre-trained on over 2 million vertebrate RNA sequences.
+SpliceBERT ([manuscript](https://doi.org/10.1093/bib/bbae163), [preprint](https://www.biorxiv.org/content/10.1101/2023.01.31.526427v2)) is a primary RNA sequence language model pre-trained on over 2 million vertebrate RNA sequences.
 It can be used to study RNA splicing and other biological problems related to RNA sequence.
+For additional benchmarks and applications of SpliceBERT, see [SpliceBERT-analysis](https://github.com/chenkenbio/SpliceBERT-analysis).
 
 ![SpliceBERT overview](./overview.png)
 
@@ -168,6 +169,8 @@ with autocast():
 	- [splice site prediction](./examples/04-splicesite-prediction) (related to Figure 6)
 
 
+
+
 ## Contact
 For issues related to the scripts, create an issue at https://github.com/biomed-AI/SpliceBERT/issues.
 
@@ -178,11 +181,11 @@ For any other questions, feel free to contact chenkenbio {at} gmail.com.
 ```TeX
 @article{Chen2023.01.31.526427,
 	author = {Chen, Ken and Zhou, Yue and Ding, Maolin and Wang, Yu and Ren, Zhixiang and Yang, Yuedong},
-	title = {Self-supervised learning on millions of pre-mRNA sequences improves sequence-based RNA splicing prediction},
-	year = {2023},
-	doi = {10.1101/2023.01.31.526427},
-	publisher = {Cold Spring Harbor Laboratory},
-	URL = {https://www.biorxiv.org/content/early/2023/02/03/2023.01.31.526427},
-	journal = {bioRxiv}
+	title = {Self-supervised learning on millions of primary RNA sequences from 72 vertebrates improves sequence-based RNA splicing prediction},
+	year = {2024},
+	doi = {10.1093/bib/bbae163},
+	publisher = {Oxford University Press},
+	URL = {https://doi.org/10.1093/bib/bbae163},
+	journal = {Briefings in bioinformatics}
 }
 ```
