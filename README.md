@@ -2,7 +2,8 @@
 
 SpliceBERT ([manuscript](https://doi.org/10.1093/bib/bbae163), [preprint](https://www.biorxiv.org/content/10.1101/2023.01.31.526427v2)) is a primary RNA sequence language model pre-trained on over 2 million vertebrate RNA sequences.
 It can be used to study RNA splicing and other biological problems related to RNA sequence.
-For additional benchmarks and applications of SpliceBERT, see [SpliceBERT-analysis](https://github.com/chenkenbio/SpliceBERT-analysis).
+
+**For additional benchmarks and applications of SpliceBERT (e.g., on SpliceAI's and DeepSTARR's datasets), see [SpliceBERT-analysis](https://github.com/chenkenbio/SpliceBERT-analysis).**
 
 ![SpliceBERT overview](./overview.png)
 
